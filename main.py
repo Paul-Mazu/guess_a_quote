@@ -41,12 +41,16 @@ def chose_quote():
             used_quotes.append(pick)
             return pick
 
+def replace1(text, author):
+    first, last = author.split()
+    return text.replace(first, '******').replace(last, '******')
+
 def game():
     index = chose_quote()
     quote_author = read[index][1]
     authors_set_temp =authors_set
     authors_set_temp.remove(quote_author)
-    options_list = sample(authors_set_temp,k = 5)
+    options_list = sample(list(authors_set_temp),k = 5)
     options_list.append(quote_author)
     shuffle(options_list)
 
@@ -55,12 +59,12 @@ def game():
         print(f'{n}. {i}')
     
     remaining_guesses = 3
-    while remaining_guesses > 0:
+    while True:
         shot = int(input('Who is author of the listed quote?: '))
         if quote_author == options_list[shot-1]:
-
             print('You won! Congratulations!')
             break
+
         elif remaining_guesses == 3:
             remaining_guesses -= 1 
             print('Try again, here is hint: ')
@@ -72,9 +76,13 @@ def game():
         elif remaining_guesses == 2:
             remaining_guesses -= 1 
             author_description = soup.find(class_='author-description').get_text()
-            print(author_description)
+            print(replace1(author_description, quote_author))
+        else: break
 
-if datetime.now() == datetime.weekday(0):
+    again = input('Would you like play again? y/n: ')
+    if again == 'y': return game ()
+
+if datetime.now().weekday() == 0:
     update_quotes()
 
 game()
